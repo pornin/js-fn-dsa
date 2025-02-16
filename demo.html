@@ -1,0 +1,46 @@
+<html>
+<head>
+</head>
+<script type="module">
+import * as FNDSA from './fndsa.js';
+
+function set_blob(id, b) {
+    let d = document.getElementById(id);
+    if (d) {
+        let s = '';
+        for (let i = 0; i < b.length; i ++) {
+            if ((i & 31) == 0) {
+                s += '<br />';
+            }
+            let x = b[i];
+            s += '0123456789abcdef'[x >>> 4];
+            s += '0123456789abcdef'[x & 0xF];
+        }
+        d.innerHTML = s;
+    }
+}
+
+let b = document.getElementById('button_go');
+b.addEventListener('click', () => {
+    let kp = FNDSA.keygen(9);
+    let sk = kp.sign_key;
+    let vk = kp.verify_key;
+    set_blob('sign_key', sk);
+    set_blob('verify_key', vk);
+    let sig = FNDSA.sign(sk, '', FNDSA.ID_RAW, 'test');
+    set_blob('signature', sig);
+    let r = FNDSA.verify(sig, vk, '', FNDSA.ID_RAW, 'test');
+    let d = document.getElementById('status');
+    if (d) {
+        d.innerHTML = r ? 'OK' : 'FAILED';
+    }
+});
+</script>
+<body>
+<button id="button_go">Go</button>
+<p>signing key:<div id="sign_key"></div></p>
+<p>verifying key:<div id="verify_key"></div></p>
+<p>signature:<div id="signature"></div></p>
+<p>status: <div id="status"></div></p>
+</body>
+</html>

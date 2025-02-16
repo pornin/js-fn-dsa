@@ -1,0 +1,33 @@
+<html>
+<head>
+</head>
+<body>
+<script type="text/javascript">
+async function recompute() {
+    let d = document.getElementById('debug_out');
+    let r = await window.fetch('./fndsa.js');
+    if (!r.ok) {
+        throw new Error("HTTP error (fndsa.js): " + r.status);
+    }
+    let bb1 = new Uint8Array(await r.arrayBuffer());
+    r = await window.fetch('./tests.js');
+    if (!r.ok) {
+        throw new Error("HTTP error (tests.js): " + r.status);
+    }
+    let bb2 = new Uint8Array(await r.arrayBuffer());
+    let bb = new Uint8Array(bb1.length + bb2.length);
+    bb.set(bb1, 0);
+    bb.set(bb2, bb1.length);
+    let b64 = window.btoa(Array.from(bb,
+        (x) => String.fromCodePoint(x)).join(''));
+    let u = 'data:text/javascript;base64,' + b64;
+    let m = await import(u);
+    m.run_tests(d);
+}
+</script>
+<form action="">
+    <input type="button" value="go" onclick="recompute();" />
+</form>
+<p id="debug_out"></p>
+</body>
+</html>
