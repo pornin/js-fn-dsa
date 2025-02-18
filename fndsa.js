@@ -3,19 +3,25 @@
 // -------------------------------------------------------------------------
 // Public API.
 
-// Key pair generation.
-// A new key pair is generated, and returned as an object with two
-// fields:
-//    sign_key     signing key (private)
-//    verify_key   verifying key (public)
-// Both keys are Uint8Array instances.
-// Parameter:
-//    logn   degree (logarithmic: 9 for FN-DSA-512, 10 for FN-DSA-1024)
-// If degree is not 9 or 10, then an Error is thrown.
-//
-// Key pair generation is somewhat expensive, and thus should be
-// performed in a worker thread rather than the GUI thread (for
-// in-browser applications).
+/**
+ * An FN-DSA key pair.
+ * @typedef {Object} FNDSAKeyPair
+ * @property {Uint8Array} sign_key The signing key (private).
+ * @property {Uint8Array} verify_key The verifying key (public).
+ */
+
+/**
+ * Generates a new {@link FNDSAKeyPair} with the specified degree.
+ *
+ * Key pair generation is somewhat expensive, and thus should be
+ * performed in a worker thread rather than the GUI thread (for browser
+ * applications).
+ *
+ * @param {number} logn - logarithmic degree of the key; 9 for FN-DSA-512,
+ *     10 for FN-DSA-1024
+ * @throws if {@link logn} is not 9 or 10
+ * @returns {FNDSAKeyPair} the generated key pair
+ */
 export function keygen(logn) {
     if (logn !== 9 && logn !== 10) {
         throw new Error("invalid log(degree) (must be 9 or 10)");
