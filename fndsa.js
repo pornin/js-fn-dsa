@@ -29,27 +29,32 @@ export function keygen(logn) {
     return core.keygen(logn);
 }
 
-// Sign some data. Parameters:
-//    sk    signing key (encoded, Uint8Array)
-//    ctx   context string (Uint8Array or string)
-//    id    pre-hashing identifier (Uint8Array)
-//    hv    (pre-hashed) message (Uint8Array or string)
-//
-// The context string ensures domain separation; it is supposed to be
-// something like the application name. It is not secret. If a string is
-// provided, then it is encoded into bytes (UTF-8). The length of that
-// value, in bytes, must be at most 255 bytes.
-//
-// If the message to sign is provided "as is" in hv, then id should be
-// equal to the ID_RAW constant. In that case, hv can be either a
-// Uint8Array (the bytes to sign) or a string; if hv is a string, then
-// it is first encoded to bytes (with UTF-8 conventions). Otherwise, the
-// message is pre-hashed by the caller: hv is the hash value (a Uint8Array
-// instance) and id must be the ASN.1 DER-encoded OID that identifies the
-// hash function. The ID_* constants are provided for the "classic" hash
-// functions (SHA-2 and SHA-3 families).
-//
-// Returned value is the new signature (Uint8Array).
+/**
+ * Sign some data.
+ *
+ * The [context]({@link ctx}) string ensures domain separation; it is
+ * supposed to be something like the application name. It is not secret.
+ * If a string is provided, then it is encoded into bytes (UTF-8). The
+ * length of that value, in bytes, must be at most 255 bytes.
+ *
+ * If the message to sign is provided "as is" in [hv]({@link hv}), then
+ * [id]({@link id}) should be equal to the [ID_RAW]({@link ID_RAW})
+ * constant. In that case, [hv]({@link hv}) can be either a
+ * {@link Uint8Array} (the bytes to sign) or a string; if
+ * [hv]({@link hv}) is a string, then it is first encoded to bytes (with
+ * UTF-8 conventions). Otherwise, the message is pre-hashed by the
+ * caller: [hv]({@link hv}) is the hash value (a {@link Uint8Array}
+ * instance) and [id]({@link id}) must be the ASN.1 DER-encoded OID that
+ * identifies the hash function. The [ID_*]({@link ID_RAW}) constants
+ * are provided for the "classic" hash functions (SHA-2 and SHA-3
+ * families).
+ *
+ * @param {Uint8Array} sk - the signing key, from {@link FNDSAKeyPair.sign_key}
+ * @param {(Uint8Array|string)} ctx - the context string
+ * @param {Uint8Array} id - pre-hashing identifier
+ * @param {(Uint8Array|string)} hv - the (pre-hashed) message
+ * @returns {Uint8Array} the new signature
+ */
 export function sign(sk, ctx, id, hv) {
     if (typeof ctx === "string") {
         ctx = new TextEncoder().encode(ctx);
